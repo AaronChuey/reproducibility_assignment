@@ -8,10 +8,9 @@ output:
 
 # Report Details
 
-
 ```{r}
 articleID <- 6-1-15 # insert the article ID code here e.g., "10-3-2015"
-reportType <- 'copilot' # specify whether this is the 'pilot' report or 'copilot' report
+reportType <- 'pilot' # specify whether this is the 'pilot' report or 'copilot' report
 pilotNames <- 'Aaron Chuey' # insert the pilot's name here e.g., "Tom Hardwicke".
 copilotNames <- 'Emily Kubota' # # insert the co-pilot's name here e.g., "Michael Frank".
 pilotTTC <- '240' # insert the pilot's estimated time to complete (in minutes, it is fine to approximate) e.g., 120
@@ -34,7 +33,6 @@ Adults (n=10) completed a task where a disk (the target) was poisitioned at the 
 Experiment 1 was designed to explore the effects of crowding on perception and action, with a particular focus on whether participants could scale their grasp aperture to the size of the target even when they could not consciously identify the size of the target. We carried out a four-way repeated measures ANOVA on the manual estimates and PGAs with task (estimation vs. grasping), crowding condition (uncrowded vs. crowded), viewing condition (closed- vs. open-loop), and target size (3.0 vs. 3.75 cm) as main factors. The significant interaction between task and crowding condition, F(1, 9) = 6.818, p = .028, suggested that crowding had different effects on performance of the grasping and manual estimation tasks. Not surprisingly, when the target was presented in isolation, participants were able to manually estimate the sizes of the two targets—and this was true for both closed-loop trials, t(9) = 7.23, p < .001, and open-loop trials, t(9) = 9.19, p < .001. Similarly, participants showed excellent grasp scaling for targets presented in isolation on both closed-loop trials, t(9) = 4.29, p = .002, and openloop trials, t(9) = 4.79, p = .001 (Fig. 3). Things were quite different, however, when the target disks were surrounded by flankers. In this condition, participants could no longer discriminate between the two disk sizes using a manual estimate closed-loop trials: t(9) = 1.02, p = .334; open-loop trials: t(9) = 1.78, p = .108?presumably because the size of the target was perceptually invisible. (Note that we use the term invisible to refer to the fact that participants could not identify the size of the target, even though they were aware of its presence and position.) In contrast, when participants were asked to grasp the same targets, their PGAs were still scaled to target size?closed-loop trials: t(9) = 4.21, p = .002; open-loop trials: t(9) = 3.392, p = .008 (Fig. 3).  
 
 ------
-
 
 ```{r global_options, include=FALSE}
 # sets up some formatting options for the R Markdown document
@@ -64,13 +62,14 @@ reportObject <- data.frame(dummyRow = TRUE, reportedValue = NA, obtainedValue = 
 # Step 2: Load data
 
 ```{r}
-raw_data <- read_excel("~/git/reproducibility_assignment/GroupA_6-1-2015/data/data_Exp1.xlsx", sheet='summary')
+raw_data <- read_excel("GroupA_6-1-2015/data/data_Exp1.xlsx", sheet='summary')
 
 #delete first two junk rows
 raw_data <- raw_data[-c(1),]
 raw_data <- raw_data[-c(1),]
 
 raw_data
+
 ```
 
 # Step 3: Tidy data
@@ -133,65 +132,65 @@ data_wide
 ## Descriptive statistics
 
 ```{r}
+#four-way repeated measures ANOVA on the manual estimates and PGAs with task (estimation vs. grasping), crowding condition (uncrowded vs. crowded), viewing condition (closed- vs. open-loop), and target size (3.0 vs. 3.75 cm) as main factors
+#The significant interaction between task and crowding condition F(1, 9) = 6.818, p = .028
+anova1 <- aov(mean.aperture ~ (factor(task)*factor(condition)*factor(loop)*factor(target.size)) + Error(factor(subject)/(factor(task)*factor(condition)*factor(loop)*factor(target.size))), data=data_tidy)
+interaction_task_condition <- anova1[7]
+reportObject <- reproCheck(reportedValue = '6.818', obtainedValue = abs(6.818), valueType = 'other')
+reportObject <- reproCheck(reportedValue = '.028', obtainedValue = abs(.0282), valueType = 'p')
+
+#when the target was presented in isolation, participants were able to manually estimate the sizes of the two targets—and this was true for both closed-loop trials, t(9) = 7.23, p < .001 
+ttest_estimation_uncrowded_closed <- with(data=data_wide, t.test(estimation_closed_uncrowded_3, estimation_closed_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '7.23', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[3])), valueType = 'p', eyeballCheck = TRUE)
+
+#and open-loop trials, t(9) = 9.19, p < .001. 
+ttest_uncrowded_estimation_open <- with(data=data_wide, t.test(estimation_open_uncrowded_3, estimation_open_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '9.19', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[3])), valueType = 'p', eyeballCheck = TRUE)
+
+#Similarly, participants showed excellent grasp scaling for targets presented in isolation on both closed-loop trials, t(9) = 4.29, p = .002 
+ttest_uncrowded_grasp_closed <- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '4.29', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')
+
+#and openloop trials, t(9) = 4.79, p = .001 
+ttest_uncrowded_grasp_open <- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '4.79', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p', eyeballCheck = TRUE)
+
+#Things were quite different, however, when the target disks were surrounded by flankers. In this condition, participants could no longer discriminate between the two disk sizes using a manual estimate closed-loop trials: t(9) = 1.02, p = .334
+ttest_crowded_estimation_closed <- with(data=data_wide, t.test(estimation_closed_crowded_3, estimation_closed_crowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '1.02', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '.334', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[3])), valueType = 'p')
+
+#open-loop trials: t(9) = 1.78, p = .108
+ttest_crowded_estimation_open <- with(data=data_wide, t.test(estimation_open_crowded_3, estimation_open_crowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '1.78', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '.108', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[3])), valueType = 'p')
+
+#In contrast, when participants were asked to grasp the same targets, their PGAs were still scaled to target size?closed-loop trials: t(9) = 4.21, p = .002 
+ttest_crowded_grasp_closed <- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '4.21', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')
+
+#open-loop trials: t(9) = 3.392, p = .008
+ttest_crowded_grasp_open <- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
+reportObject <- reproCheck(reportedValue = '3.392', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')
+reportObject <- reproCheck(reportedValue = '.008', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p')
+
 ```
 
 ## Inferential statistics
 
 ```{r}
-#four-way repeated measures ANOVA on the manual estimates and PGAs with task (estimation vs. grasping), crowding condition (uncrowded vs. crowded), viewing condition (closed- vs. open-loop), and target size (3.0 vs. 3.75 cm) as main factors
-#The significant interaction between task and crowding condition F(1, 9) = 6.818, p = .028
-anova1 <- aov(mean.aperture ~ (factor(task)*factor(condition)*factor(loop)*factor(target.size)) + Error(factor(subject)/(factor(task)*factor(condition)*factor(loop)*factor(target.size))), data=data_tidy)
-interaction_task_condition <- anova1[7]
 
-#when the target was presented in isolation, participants were able to manually estimate the sizes of the two targets—and this was true for both closed-loop trials, t(9) = 7.23, p < .001 
-ttest_estimation_uncrowded_closed <- with(data=data_wide, t.test(estimation_closed_uncrowded_3, estimation_closed_uncrowded_3.75, paired=TRUE))
-
-#and open-loop trials, t(9) = 9.19, p < .001. 
-ttest_uncrowded_estimation_open <- with(data=data_wide, t.test(estimation_open_uncrowded_3, estimation_open_uncrowded_3.75, paired=TRUE))
-
-#Similarly, participants showed excellent grasp scaling for targets presented in isolation on both closed-loop trials, t(9) = 4.29, p = .002 
-ttest_uncrowded_grasp_closed <- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
-
-#and openloop trials, t(9) = 4.79, p = .001 
-ttest_uncrowded_grasp_open <- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
-
-#Things were quite different, however, when the target disks were surrounded by flankers. In this condition, participants could no longer discriminate between the two disk sizes using a manual estimate closed-loop trials: t(9) = 1.02, p = .334
-ttest_crowded_estimation_closed <- with(data=data_wide, t.test(estimation_closed_crowded_3, estimation_closed_crowded_3.75, paired=TRUE))
-
-#open-loop trials: t(9) = 1.78, p = .108
-ttest_crowded_estimation_open <- with(data=data_wide, t.test(estimation_open_crowded_3, estimation_open_crowded_3.75, paired=TRUE))
-
-#In contrast, when participants were asked to grasp the same targets, their PGAs were still scaled to target size?closed-loop trials: t(9) = 4.21, p = .002 
-ttest_crowded_grasp_closed <- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
-
-#open-loop trials: t(9) = 3.392, p = .008
-ttest_crowded_grasp_open <- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
-
-
-#Reprochecks in order of appearance in target outcomes
-interaction_task_condition_f <- reproCheck(reportedValue = '6.818', obtainedValue = abs(6.818), valueType = 'other')
-interaction_task_condition_p <- reproCheck(reportedValue = '.028', obtainedValue = abs(.0282), valueType = 'p')
-ttest_estimation_uncrowded_closed_t <- reproCheck(reportedValue = '7.23', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[1])), valueType = 't')
-ttest_estimation_uncrowded_closed_p <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[3])), valueType = 'p', eyeballCheck = TRUE)
-ttest_uncrowded_estimation_open_t <- reproCheck(reportedValue = '9.19', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[1])), valueType = 't')
-ttest_uncrowded_estimation_open_p <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[3])), valueType = 'p', eyeballCheck = TRUE)
-ttest_uncrowded_grasp_closed_t <- reproCheck(reportedValue = '4.29', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')
-ttest_uncrowded_grasp_closed_p <- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')
-ttest_uncrowded_grasp_open_t <- reproCheck(reportedValue = '4.79', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')
-ttest_uncrowded_grasp_open_p <- reproCheck(reportedValue = '<.001', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p', eyeballCheck = TRUE)
-ttest_crowded_estimation_closed_t <- reproCheck(reportedValue = '1.02', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[1])), valueType = 't')
-ttest_crowded_estimation_closed_p <- reproCheck(reportedValue = '.334', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[3])), valueType = 'p')
-ttest_crowded_estimation_open_t <- reproCheck(reportedValue = '1.78', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[1])), valueType = 't')
-ttest_crowded_estimation_open_p <- reproCheck(reportedValue = '.108', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[3])), valueType = 'p')
-ttest_uncrowded_grasp_closed_t <- reproCheck(reportedValue = '4.21', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')
-ttest_uncrowded_grasp_closed_p <- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')
-ttest_uncrowded_grasp_open_t <- reproCheck(reportedValue = '3.392', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')
-ttest_uncrowded_grasp_open_p <- reproCheck(reportedValue = '.008', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p')
 ```
 
 # Step 5: Conclusion
 
-There were a few minor errors, and one major in the original paper. Aaron's report looks great.
+Aaron's report looks great. There were a few rouding errors in the original paper, and one major error in the reporting of a t-statistic and the corresponding p-value. 
+
 
 ```{r}
 reportObject <- reportObject %>%
@@ -223,6 +222,8 @@ if(reportType == "copilot"){
 ```
 
 # Session information
+
+[This function will output information about the package versions used in this report:]
 
 ```{r session_info, include=TRUE, echo=TRUE, results='markup'}
 devtools::session_info()
