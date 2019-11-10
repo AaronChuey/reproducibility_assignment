@@ -1518,8 +1518,8 @@ copilotNames &lt;- 'Emily Kubota' # # insert the co-pilot's name here e.g., &quo
 pilotTTC &lt;- '240' # insert the pilot's estimated time to complete (in minutes, it is fine to approximate) e.g., 120
 copilotTTC &lt;- NA # insert the co-pilot's estimated time to complete (in minutes, it is fine to approximate) e.g., 120
 pilotStartDate &lt;- '11/05/2019' # insert the piloting start date in US format e.g., as.Date(&quot;01/25/18&quot;, format = &quot;%m/%d/%y&quot;)
-copilotStartDate &lt;- NA # insert the co-piloting start date in US format e.g., as.Date(&quot;01/25/18&quot;, format = &quot;%m/%d/%y&quot;)
-completionDate &lt;- NA # insert the date of final report completion in US format e.g., as.Date(&quot;01/25/18&quot;, format = &quot;%m/%d/%y&quot;)</code></pre>
+copilotStartDate &lt;- '11/10/2019' # insert the co-piloting start date in US format e.g., as.Date(&quot;01/25/18&quot;, format = &quot;%m/%d/%y&quot;)
+completionDate &lt;- '11/10/2019' # insert the date of final report completion in US format e.g., as.Date(&quot;01/25/18&quot;, format = &quot;%m/%d/%y&quot;)</code></pre>
 <hr />
 <div id="methods-summary" class="section level4">
 <h4>Methods summary:</h4>
@@ -1550,7 +1550,7 @@ reportObject &lt;- data.frame(dummyRow = TRUE, reportedValue = NA, obtainedValue
 </div>
 <div id="step-2-load-data" class="section level1">
 <h1>Step 2: Load data</h1>
-<pre class="r"><code>raw_data &lt;- read_excel(&quot;~/Desktop/reproducibility_assignment/GroupA_6-1-2015/data/data_Exp1.xlsx&quot;, sheet='summary')
+<pre class="r"><code>raw_data &lt;- read_excel(&quot;GroupA_6-1-2015/data/data_Exp1.xlsx&quot;, sheet='summary')
 
 #delete first two junk rows
 raw_data &lt;- raw_data[-c(1),]
@@ -1665,81 +1665,70 @@ data_wide</code></pre>
 </div>
 <div id="descriptive-statistics" class="section level2">
 <h2>Descriptive statistics</h2>
-</div>
-<div id="inferential-statistics" class="section level2">
-<h2>Inferential statistics</h2>
 <pre class="r"><code>#four-way repeated measures ANOVA on the manual estimates and PGAs with task (estimation vs. grasping), crowding condition (uncrowded vs. crowded), viewing condition (closed- vs. open-loop), and target size (3.0 vs. 3.75 cm) as main factors
 #The significant interaction between task and crowding condition F(1, 9) = 6.818, p = .028
 anova1 &lt;- aov(mean.aperture ~ (factor(task)*factor(condition)*factor(loop)*factor(target.size)) + Error(factor(subject)/(factor(task)*factor(condition)*factor(loop)*factor(target.size))), data=data_tidy)
 interaction_task_condition &lt;- anova1[7]
-
-#when the target was presented in isolation, participants were able to manually estimate the sizes of the two targets—and this was true for both closed-loop trials, t(9) = 7.23, p &lt; .001 
-ttest_estimation_uncrowded_closed &lt;- with(data=data_wide, t.test(estimation_closed_uncrowded_3, estimation_closed_uncrowded_3.75, paired=TRUE))
-
-#and open-loop trials, t(9) = 9.19, p &lt; .001. 
-ttest_uncrowded_estimation_open &lt;- with(data=data_wide, t.test(estimation_open_uncrowded_3, estimation_open_uncrowded_3.75, paired=TRUE))
-
-#Similarly, participants showed excellent grasp scaling for targets presented in isolation on both closed-loop trials, t(9) = 4.29, p = .002 
-ttest_uncrowded_grasp_closed &lt;- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
-
-#and openloop trials, t(9) = 4.79, p = .001 
-ttest_uncrowded_grasp_open &lt;- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
-
-#Things were quite different, however, when the target disks were surrounded by flankers. In this condition, participants could no longer discriminate between the two disk sizes using a manual estimate closed-loop trials: t(9) = 1.02, p = .334
-ttest_crowded_estimation_closed &lt;- with(data=data_wide, t.test(estimation_closed_crowded_3, estimation_closed_crowded_3.75, paired=TRUE))
-
-#open-loop trials: t(9) = 1.78, p = .108
-ttest_crowded_estimation_open &lt;- with(data=data_wide, t.test(estimation_open_crowded_3, estimation_open_crowded_3.75, paired=TRUE))
-
-#In contrast, when participants were asked to grasp the same targets, their PGAs were still scaled to target size?closed-loop trials: t(9) = 4.21, p = .002 
-ttest_crowded_grasp_closed &lt;- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
-
-#open-loop trials: t(9) = 3.392, p = .008
-ttest_crowded_grasp_open &lt;- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
-
-
-#Reprochecks in order of appearance in target outcomes
 interaction_task_condition_f &lt;- reproCheck(reportedValue = '6.818', obtainedValue = abs(6.818), valueType = 'other')</code></pre>
 <pre><code>## [1] &quot;MATCH for other. The reported value (6.818) and the obtained value (6.818) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>interaction_task_condition_p &lt;- reproCheck(reportedValue = '.028', obtainedValue = abs(.0282), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MATCH for p. The reported value (0.028) and the obtained value (0.028) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
-<pre class="r"><code>ttest_estimation_uncrowded_closed_t &lt;- reproCheck(reportedValue = '7.23', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#when the target was presented in isolation, participants were able to manually estimate the sizes of the two targets—and this was true for both closed-loop trials, t(9) = 7.23, p &lt; .001 
+ttest_estimation_uncrowded_closed &lt;- with(data=data_wide, t.test(estimation_closed_uncrowded_3, estimation_closed_uncrowded_3.75, paired=TRUE))
+ttest_estimation_uncrowded_closed_t &lt;- reproCheck(reportedValue = '7.23', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MATCH for t. The reported value (7.23) and the obtained value (7.23) differed by 0%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_estimation_uncrowded_closed_p &lt;- reproCheck(reportedValue = '&lt;.001', obtainedValue = abs(as.numeric(ttest_estimation_uncrowded_closed[3])), valueType = 'p', eyeballCheck = TRUE)</code></pre>
 <pre><code>## [1] &quot;MATCH for p. Eyeball comparison only.&quot;</code></pre>
-<pre class="r"><code>ttest_uncrowded_estimation_open_t &lt;- reproCheck(reportedValue = '9.19', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#and open-loop trials, t(9) = 9.19, p &lt; .001. 
+ttest_uncrowded_estimation_open &lt;- with(data=data_wide, t.test(estimation_open_uncrowded_3, estimation_open_uncrowded_3.75, paired=TRUE))
+ttest_uncrowded_estimation_open_t &lt;- reproCheck(reportedValue = '9.19', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MINOR_ERROR for t. The reported value (9.19) and the obtained value (9.2) differed by 0.11%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_uncrowded_estimation_open_p &lt;- reproCheck(reportedValue = '&lt;.001', obtainedValue = abs(as.numeric(ttest_uncrowded_estimation_open[3])), valueType = 'p', eyeballCheck = TRUE)</code></pre>
 <pre><code>## [1] &quot;MATCH for p. Eyeball comparison only.&quot;</code></pre>
-<pre class="r"><code>ttest_uncrowded_grasp_closed_t &lt;- reproCheck(reportedValue = '4.29', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#Similarly, participants showed excellent grasp scaling for targets presented in isolation on both closed-loop trials, t(9) = 4.29, p = .002 
+ttest_uncrowded_grasp_closed &lt;- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
+ttest_uncrowded_grasp_closed_t &lt;- reproCheck(reportedValue = '4.29', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MINOR_ERROR for t. The reported value (4.29) and the obtained value (4.3) differed by 0.23%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_uncrowded_grasp_closed_p &lt;- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MATCH for p. The reported value (0.002) and the obtained value (0.002) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
-<pre class="r"><code>ttest_uncrowded_grasp_open_t &lt;- reproCheck(reportedValue = '4.79', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#and openloop trials, t(9) = 4.79, p = .001 
+ttest_uncrowded_grasp_open &lt;- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
+ttest_uncrowded_grasp_open_t &lt;- reproCheck(reportedValue = '4.79', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MINOR_ERROR for t. The reported value (4.79) and the obtained value (4.8) differed by 0.21%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_uncrowded_grasp_open_p &lt;- reproCheck(reportedValue = '&lt;.001', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p', eyeballCheck = TRUE)</code></pre>
 <pre><code>## [1] &quot;MATCH for p. Eyeball comparison only.&quot;</code></pre>
-<pre class="r"><code>ttest_crowded_estimation_closed_t &lt;- reproCheck(reportedValue = '1.02', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#Things were quite different, however, when the target disks were surrounded by flankers. In this condition, participants could no longer discriminate between the two disk sizes using a manual estimate closed-loop trials: t(9) = 1.02, p = .334
+ttest_crowded_estimation_closed &lt;- with(data=data_wide, t.test(estimation_closed_crowded_3, estimation_closed_crowded_3.75, paired=TRUE))
+ttest_crowded_estimation_closed_t &lt;- reproCheck(reportedValue = '1.02', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MATCH for t. The reported value (1.02) and the obtained value (1.02) differed by 0%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_crowded_estimation_closed_p &lt;- reproCheck(reportedValue = '.334', obtainedValue = abs(as.numeric(ttest_crowded_estimation_closed[3])), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MATCH for p. The reported value (0.334) and the obtained value (0.334) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
-<pre class="r"><code>ttest_crowded_estimation_open_t &lt;- reproCheck(reportedValue = '1.78', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#open-loop trials: t(9) = 1.78, p = .108
+ttest_crowded_estimation_open &lt;- with(data=data_wide, t.test(estimation_open_crowded_3, estimation_open_crowded_3.75, paired=TRUE))
+ttest_crowded_estimation_open_t &lt;- reproCheck(reportedValue = '1.78', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MATCH for t. The reported value (1.78) and the obtained value (1.78) differed by 0%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_crowded_estimation_open_p &lt;- reproCheck(reportedValue = '.108', obtainedValue = abs(as.numeric(ttest_crowded_estimation_open[3])), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MATCH for p. The reported value (0.108) and the obtained value (0.108) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
-<pre class="r"><code>ttest_uncrowded_grasp_closed_t &lt;- reproCheck(reportedValue = '4.21', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#In contrast, when participants were asked to grasp the same targets, their PGAs were still scaled to target size?closed-loop trials: t(9) = 4.21, p = .002 
+ttest_crowded_grasp_closed &lt;- with(data=data_wide, t.test(grasp_closed_uncrowded_3, grasp_closed_uncrowded_3.75, paired=TRUE))
+ttest_uncrowded_grasp_closed_t &lt;- reproCheck(reportedValue = '4.21', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MINOR_ERROR for t. The reported value (4.21) and the obtained value (4.3) differed by 2.14%. Note that the obtained value was rounded to 2 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_uncrowded_grasp_closed_p &lt;- reproCheck(reportedValue = '.002', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_closed[3])), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MATCH for p. The reported value (0.002) and the obtained value (0.002) differed by 0%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
-<pre class="r"><code>ttest_uncrowded_grasp_open_t &lt;- reproCheck(reportedValue = '3.392', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')</code></pre>
+<pre class="r"><code>#open-loop trials: t(9) = 3.392, p = .008
+ttest_crowded_grasp_open &lt;- with(data=data_wide, t.test(grasp_open_uncrowded_3, grasp_open_uncrowded_3.75, paired=TRUE))
+ttest_uncrowded_grasp_open_t &lt;- reproCheck(reportedValue = '3.392', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[1])), valueType = 't')</code></pre>
 <pre><code>## [1] &quot;MAJOR_ERROR for t. The reported value (3.392) and the obtained value (4.796) differed by 41.39%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
 <pre class="r"><code>ttest_uncrowded_grasp_open_p &lt;- reproCheck(reportedValue = '.008', obtainedValue = abs(as.numeric(ttest_uncrowded_grasp_open[3])), valueType = 'p')</code></pre>
 <pre><code>## [1] &quot;MAJOR_ERROR for p. The reported value (0.008) and the obtained value (0.001) differed by 87.5%. Note that the obtained value was rounded to 3 decimal places to match the reported value.&quot;</code></pre>
 </div>
+<div id="inferential-statistics" class="section level2">
+<h2>Inferential statistics</h2>
+</div>
 </div>
 <div id="step-5-conclusion" class="section level1">
 <h1>Step 5: Conclusion</h1>
-<p>The target outcomes were qualitatively reproduced, although there were some descrpencies. Several of the t values reported contained rounding errors, and one t-test (uncrowded condition, grasp task, open loop) underestimated the t value and overestimated the p-value, which actually strengthens the findings. This was reported as a major error, although because this doesn’t impact the strength of the argument being made in the paper, I wouldn’t personally categorize it as such.</p>
+<p>The target outcomes were qualitatively reproduced, although there were some descrpencies. Several of the t values reported contained rounding errors, and one t-test (uncrowded condition, grasp task, open loop) underestimated the t value and overestimated the p-value, which actually strengthens the findings. This was reported as a major error, although because this doesn’t impact the strength of the argument being made in the paper, I wouldn’t personally categorize it as such. The overall findings were reproduced.</p>
 <p>[PILOT/COPILOT DOD NOT EDIT THE CODE CHUNK BELOW]</p>
 <pre class="r"><code>reportObject &lt;- reportObject %&gt;%
   filter(dummyRow == FALSE) %&gt;% # remove the dummy row
@@ -1782,7 +1771,7 @@ if(reportType == &quot;copilot&quot;){
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       America/Los_Angeles         
-##  date     2019-11-09                  
+##  date     2019-11-10                  
 ## 
 ## ─ Packages ──────────────────────────────────────────────────────────────
 ##  package      * version date       lib
